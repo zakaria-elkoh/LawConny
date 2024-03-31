@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\User;
 
+use App\Http\Controllers\Controller;
 use App\Models\Like;
+use App\Models\Post;
 use Illuminate\Http\Request;
 
 class LikeController extends Controller
@@ -10,6 +12,22 @@ class LikeController extends Controller
     /**
      * Display a listing of the resource.
      */
+    public function storeLike(Request $request, Post $post)
+    {
+
+        $post->likes()->sync($request->user()->id);
+
+        return response()->json("liked" . $post, 201);
+    }
+
+    public function removeLike(Request $request, Post $post)
+    {
+        $post->likes()->detach($request->user()->id);
+
+        return response()->json("deleted with success" . $post, 201);
+    }
+
+
     public function index()
     {
         //

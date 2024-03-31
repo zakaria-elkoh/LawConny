@@ -18,7 +18,7 @@ class UserPostResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'user_name' => $this->user_name,
-            'profile_image' => 'the path will be here',
+            'profile_image' => $this->getFirstMediaUrl('profile_images_collection'),
         ];
     }
 }

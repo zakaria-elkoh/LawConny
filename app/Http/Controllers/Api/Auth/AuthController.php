@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\StoreUserRequest;
+use App\Http\Resources\User\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -12,15 +13,17 @@ use Illuminate\Support\Facades\Hash;
 class AuthController extends Controller
 {
 
-    public function register(StoreUserRequest $request)
+    public function register(Request $request)
     {
 
         $user = User::create([
             'name' => $request->name,
             'user_name' => $request->user_name,
+            'email' => $request->email,
             'password' => Hash::make($request->password)
         ]);
 
+        $user->addMediaFromRequest('profile_image')->toMediaCollection('profile_images_collection');
 
         if (!$user) {
             $response = [
@@ -32,7 +35,7 @@ class AuthController extends Controller
         $token = $user->createToken('myapptoken')->plainTextToken;
 
         $response = [
-            'user' => $user,
+            'user' => new UserResource($user),
             'token' => $token
         ];
 
@@ -57,7 +60,7 @@ class AuthController extends Controller
         $response = [
             'message' => 'User successfully login',
             'token' => $token,
-            'user' => $user,
+            'user' => new UserResource($user),
         ];
 
         return response()->json($response, 200);
@@ -72,3 +75,4 @@ class AuthController extends Controller
         ]);
     }
 }
+

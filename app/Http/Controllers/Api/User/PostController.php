@@ -13,16 +13,17 @@ use Illuminate\Http\Request;
 
 class PostController extends Controller
 {
+
     /**
-    * @OA\Get(
-    *    path="/api/students",
-    *    tags={"Students"},
-    *    summary="Get all students",
-    *    description="Retrieve a list of all students",
-    * @OA\Response(response="200", description="List of students"),
-    * @OA\Response(response="404", description="No student found"),
-    * )
-    */
+     * @OA\Get(
+     *    path="/api/posts",
+     *    tags={"posts"},
+     *    summary="Get all posts",
+     *    description="Retrieve a list of all posts",
+     * @OA\Response(response="200", description="List of posts"),
+     * @OA\Response(response="404", description="No student found"),
+     * )
+     */
     public function index()
     {
         $posts = Post::with('user', 'tags')->orderBy('created_at', 'DESC')->paginate(5);
@@ -46,22 +47,22 @@ class PostController extends Controller
 
 
     /** @OA\Post(
-    *    path="/api/students",
-        *       tags={"Students"},
-        *       summary="Create a new student",
-        *       description="Create a new student with provided name and age",
-        *    @OA\RequestBody(
-        *       required=true,
-        *    @OA\JsonContent(
-        *       required={"name", "age"},
-        *    @OA\Property(property="name", type="string"),
-        *    @OA\Property(property="age", type="integer")
-        *    )
-        *    ),
-        *    @OA\Response(response="201", description="Student created"),
-        *    @OA\Response(response="400", description="Bad request")
-    *    )
-    */
+     *    path="/api/posts",
+     *       tags={"posts"},
+     *       summary="Create a new post",
+     *       description="Create a new student with provided name and age",
+     *    @OA\RequestBody(
+     *       required=true,
+     *    @OA\JsonContent(
+     *       required={"name", "age"},
+     *    @OA\Property(property="name", type="string"),
+     *    @OA\Property(property="age", type="integer")
+     *    )
+     *    ),
+     *    @OA\Response(response="201", description="Student created"),
+     *    @OA\Response(response="400", description="Bad request")
+     *    )
+     */
     public function store(StorePostRequest $request)
     {
         $post = Post::create([
@@ -69,6 +70,8 @@ class PostController extends Controller
             'description' => $request->description,
             'user_id' => $request->user()->id,
         ]);
+
+        $post->addMediaFromRequest('post_image')->toMediaCollection('post_images_collection');
 
         $response = [
             'message' => 'Post created with success',
@@ -78,24 +81,24 @@ class PostController extends Controller
         return response()->json($response, 201);
     }
 
-    
-    
+
+
     /** @OA\Get(
-    *       path="/api/students/{id}",
-    *       tags={"Students"},
-    *       summary="Get a student by ID",
-    *       description="Retrieve a student by its ID",
-    *    @OA\Parameter(
-    *       name="id",
-    *       in="path",
-    *       required=true,
-    *       description="ID of the student to retrieve",
-    *    @OA\Schema(type="integer")
-    *    ),
-    *    @OA\Response(response="200", description="Student found"),
-    *    @OA\Response(response="404", description="Student not found")
-    *    )
-    */
+     *       path="/api/posts/{id}",
+     *       tags={"posts"},
+     *       summary="Get a post by ID",
+     *       description="Retrieve a post by its ID",
+     *    @OA\Parameter(
+     *       name="id",
+     *       in="path",
+     *       required=true,
+     *       description="ID of the post to retrieve",
+     *    @OA\Schema(type="integer")
+     *    ),
+     *    @OA\Response(response="200", description="post found"),
+     *    @OA\Response(response="404", description="post not found")
+     *    )
+     */
 
     public function show(Post $post)
     {
@@ -112,55 +115,55 @@ class PostController extends Controller
 
     /**
  
-    *   @OA\Put(
-    *          path="/api/students/{id}",
-    *          tags={"Students"},
-    *          summary="Update a student",
-    *          description="Update the details of a student",
-    *      @OA\Parameter(
-    *          name="id",
-    *          in="path",
-    *          required=true,
-    *          description="ID of the student to update",
-    *      @OA\Schema(type="integer")
-    *      ),
-    *      @OA\RequestBody(
-    *          required=true,
-    *      @OA\JsonContent(
-    *          required={"name", "age"},
-    *      @OA\Property(property="name", type="string"),
-    *      @OA\Property(property="age", type="integer")
-    *      )
-    *      ),
-    *      @OA\Response(response="200", description="Student updated"),
-    *      @OA\Response(response="400", description="Bad request"),
-    *      @OA\Response(response="404", description="Student not found")
-    *   )
-    */
+     *   @OA\Put(
+     *          path="/api/posts/{id}",
+     *          tags={"posts"},
+     *          summary="Update a student",
+     *          description="Update the details of a post",
+     *      @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true,
+     *          description="ID of the student to update",
+     *      @OA\Schema(type="integer")
+     *      ),
+     *      @OA\RequestBody(
+     *          required=true,
+     *      @OA\JsonContent(
+     *          required={"name", "age"},
+     *      @OA\Property(property="name", type="string"),
+     *      @OA\Property(property="age", type="integer")
+     *      )
+     *      ),
+     *      @OA\Response(response="200", description="post updated"),
+     *      @OA\Response(response="400", description="Bad request"),
+     *      @OA\Response(response="404", description="post not found")
+     *   )
+     */
     public function update(UpdatePostRequest $request, Post $post)
     {
         //
     }
 
-    
+
     /**
  
-    *   @OA\Delete(
-    *         path="/api/students/{id}",
-    *         tags={"Students"},
-    *         summary="Delete a student",
-    *         description="Delete a student by its ID",
-    *      @OA\Parameter(
-    *          name="id",
-    *          in="path",
-    *          required=true,
-    *          description="ID of the student to delete",
-    *      @OA\Schema(type="integer")
-    *      ),
-    *      @OA\Response(response="204", description="Student deleted"),
-    *      @OA\Response(response="404", description="Student not found")
-    *   )
-    */
+     *   @OA\Delete(
+     *         path="/api/posts/{id}",
+     *         tags={"posts"},
+     *         summary="Delete a post",
+     *         description="Delete a post by its ID",
+     *      @OA\Parameter(
+     *          name="id",
+     *          in="path",
+     *          required=true,
+     *          description="ID of the post to delete",
+     *      @OA\Schema(type="integer")
+     *      ),
+     *      @OA\Response(response="204", description="post deleted"),
+     *      @OA\Response(response="404", description="post not found")
+     *   )
+     */
     public function destroy(Post $post)
     {
         return "you wanna delete a post";

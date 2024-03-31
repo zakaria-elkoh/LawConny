@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\Lawyer;
 
+use App\Http\Controllers\Controller;
 use App\Models\Follower;
 use App\Http\Requests\StoreFollowerRequest;
 use App\Http\Requests\UpdateFollowerRequest;

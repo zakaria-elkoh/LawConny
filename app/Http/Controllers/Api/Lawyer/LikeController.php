@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api\Lawyer;
 
+use App\Http\Controllers\Controller;
 use App\Models\Like;
 use Illuminate\Http\Request;
 

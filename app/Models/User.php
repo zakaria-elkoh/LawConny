@@ -8,10 +8,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 
-class User extends Authenticatable
+class User extends Authenticatable implements HasMedia
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, InteractsWithMedia;
 
     /**
      * The attributes that are mass assignable.
@@ -21,7 +23,9 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'user_name',
+        'email',
         'password',
+        'profile_image'
     ];
 
     /**
@@ -73,13 +77,15 @@ class User extends Authenticatable
 
     public function likes()
     {
-        return $this->belongsToMany(Like::class, 'likes');
+        return $this->belongsToMany(Post::class, 'likes');
     }
+
     // works
     public function followers()
     {
         return $this->belongsToMany(User::class, 'followers', 'followed_id', 'follower_id');
     }
+    
     // works
     public function following()
     {

@@ -17,14 +17,26 @@ class CommentController extends Controller
     {
         return response()->json('hello');
     }
-    
+
 
     /**
      * Store a newly created resource in storage.
      */
     public function store(StoreCommentRequest $request)
     {
-        return 'hello fromthe store comments';
+        
+        $comment = Comment::create([
+            'body' => $request->comment,
+            'post_id' => $request->post_id,
+            'user_id' => $request->user()->id,
+        ]);
+
+        $response = [
+            'message' => 'Comment added with success',
+            'data' => $comment,
+        ];
+
+        return response()->json($response, 201);
     }
 
     /**
