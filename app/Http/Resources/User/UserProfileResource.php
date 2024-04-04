@@ -20,7 +20,14 @@ class UserProfileResource extends JsonResource
             'user_name' => $this->user_name,
             'name' => $this->name,
             'joined_at' => Carbon::parse($this->created_at)->format('d M Y'),
-            'profile_image' => 'the path will be here',
+            'profile_image' => $this->getFirstMediaUrl('profile_images_collection'),
+            'cover_image' => $this->cover_image,
+            'bio' => $this->bio,
+            'location' => $this->location,
+            // 'website' => $this->website,
+            'followers_count' => $this->followers->count(),
+            'following_count' => $this->following->count(),
+            'posts_count' => $this->posts->count(),
         ];
     }
 }

@@ -14,6 +14,22 @@ use Illuminate\Http\Request;
 class PostController extends Controller
 {
 
+    public function search(Request $request)
+    {
+        $searchValue = $request->query('search');
+        $posts = Post::with('user', 'tags')->where('description', 'like', '%' . $searchValue . '%')->orderBy('created_at', 'DESC')->paginate(5);
+
+        $response = [
+            'status' => 'ok',
+            'data' => PostResource::collection($posts),
+            'links' => [
+                'next_page_url' => $posts->nextPageUrl()
+            ]
+        ];
+
+        return response()->json($response, 200);
+    }
+
     /**
      * @OA\Get(
      *    path="/api/posts",
@@ -30,7 +46,10 @@ class PostController extends Controller
 
         $response = [
             'status' => 'ok',
-            'data' => PostResource::collection($posts)
+            'data' => PostResource::collection($posts),
+            'links' => [
+                'next_page_url' => $posts->nextPageUrl()
+            ]
         ];
 
         return response()->json($response, 200);

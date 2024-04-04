@@ -7,7 +7,7 @@ use App\Http\Resources\User\PostResource;
 use App\Http\Resources\User\UserPostResource;
 use App\Http\Resources\User\UserProfileResource;
 use App\Http\Resources\User\UserResource;
-use App\Models\Follower;
+use App\Models\Message;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -18,11 +18,35 @@ class UserController extends Controller
      */
     public function index()
     {
-        $users = User::paginate(10);
+        $users = User::orderBy('id', 'desc')->paginate(5);
 
         $response = [
             'status' => 'ok',
-            'data' => UserProfileResource::collection($users)
+            'data' => UserResource::collection($users)
+        ];
+
+        return response()->json($response, 200);
+    }
+
+    public function getChattingPartners(Request $request)
+    {
+
+        $user_id = $request->user()->id;
+
+        $usersSentTo = Message::select('receiver_id as user_id')
+            ->where('sender_id', $user_id);
+
+        $usersReceivedFrom = Message::select('sender_id as user_id')
+            ->where('receiver_id', $user_id);
+
+        $users = User::whereIn('id', $usersSentTo)
+            ->orWhereIn('id', $usersReceivedFrom)
+            ->distinct()
+            ->get();
+
+        $response = [
+            'status' => 'ok',
+            'data' => UserResource::collection($users)
         ];
 
         return response()->json($response, 200);
@@ -83,6 +107,17 @@ class UserController extends Controller
         $response = [
             'status' => 'ok',
             'data' => new UserProfileResource($user)
+        ];
+
+        return response()->json($response, 200);
+    }
+
+    public function showUserByUsername(User $user)
+    {
+
+        $response = [
+            'status' => 'ok',
+            'data' => $user
         ];
 
         return response()->json($response, 200);

@@ -6,10 +6,28 @@ use App\Http\Controllers\Controller;
 use App\Models\Follower;
 use App\Http\Requests\StoreFollowerRequest;
 use App\Http\Requests\UpdateFollowerRequest;
+use App\Models\User;
+use Illuminate\Http\Request;
 
-class FollowerController extends Controller
+class FollowController extends Controller
 {
-   
+
+    public function storeFollow(Request $request, User $user)
+    {
+
+        $request->user()->following()->sync($user->id, false);
+
+        return response()->json("followed" . $user, 201);
+    }
+
+    public function removeFollow(Request $request, User $user)
+    {
+
+        $request->user()->following()->detach($user->id);
+
+        return response()->json("removed the follow" . $user, 201);
+    }
+
     public function index()
     {
         //

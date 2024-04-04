@@ -25,6 +25,8 @@ class PostResource extends JsonResource
             'tags' => TagResource::collection($this->whenLoaded('tags')),
             'comments_count' => $this->comments->count(),
             'comments' => CommentResource::collection($this->whenLoaded('comments')),
+            'is_liked' => $request->user() ? $request->user()->likes->contains($this->id) : false,
+            'is_saved' => $request->user() ? $request->user()->saves->contains($this->id) : false,
         ];
     }
 }
