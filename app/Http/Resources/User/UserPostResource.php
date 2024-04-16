@@ -17,6 +17,7 @@ class UserPostResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'roles' => $this->roles->pluck('title'),
             'user_name' => $this->user_name,
             'profile_image' => $this->getFirstMediaUrl('profile_images_collection'),
         ];

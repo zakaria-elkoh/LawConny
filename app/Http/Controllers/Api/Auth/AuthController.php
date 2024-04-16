@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Hash;
 class AuthController extends Controller
 {
 
-    public function register(Request $request)
+    public function register(StoreUserRequest $request)
     {
 
         $user = User::create([
@@ -23,13 +23,17 @@ class AuthController extends Controller
             'password' => Hash::make($request->password)
         ]);
 
-        $user->addMediaFromRequest('profile_image')->toMediaCollection('profile_images_collection');
-
         if (!$user) {
             $response = [
                 'message' => 'can not create this user'
             ];
             return response()->json($response, 201);
+        }
+
+        $user->roles()->attach($request->role_id);
+
+        if ($request->hasFile('profile_image')) {
+            $user->addMediaFromRequest('profile_image')->toMediaCollection('profile_images_collection');
         }
 
         $token = $user->createToken('myapptoken')->plainTextToken;
@@ -75,4 +79,3 @@ class AuthController extends Controller
         ]);
     }
 }
-

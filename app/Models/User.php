@@ -15,11 +15,6 @@ class User extends Authenticatable implements HasMedia
 {
     use HasApiTokens, HasFactory, Notifiable, InteractsWithMedia;
 
-    public function getRouteKeyName()
-    {
-        return 'user_name';
-    }
-
     /**
      * The attributes that are mass assignable.
      *
@@ -52,6 +47,7 @@ class User extends Authenticatable implements HasMedia
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
     ];
+
 
     public function roles()
     {
@@ -90,7 +86,7 @@ class User extends Authenticatable implements HasMedia
     {
         return $this->belongsToMany(User::class, 'followers', 'followed_id', 'follower_id');
     }
-    
+
     // works
     public function following()
     {

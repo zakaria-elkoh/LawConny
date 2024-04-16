@@ -24,6 +24,7 @@ class UserProfileResource extends JsonResource
             'cover_image' => $this->cover_image,
             'bio' => $this->bio,
             'location' => $this->location,
+            'is_verified' => $this->is_verified === 2 ? 'pending' : ($this->is_verified ? true : false),
             // 'website' => $this->website,
             'followers_count' => $this->followers->count(),
             'following_count' => $this->following->count(),

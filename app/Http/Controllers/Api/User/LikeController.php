@@ -17,12 +17,20 @@ class LikeController extends Controller
 
         $post->likes()->sync($request->user()->id);
 
+        $post->update([
+            'total_likes' => $post->total_likes + 1
+        ]);
+
         return response()->json("liked" . $post, 201);
     }
 
     public function removeLike(Request $request, Post $post)
     {
         $post->likes()->detach($request->user()->id);
+
+        $post->update([
+            'total_likes' => $post->total_likes - 1
+        ]);
 
         return response()->json("deleted with success" . $post, 201);
     }

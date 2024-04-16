@@ -21,6 +21,7 @@ class UserResource extends JsonResource
             'name' => $this->name,
             'joined_at' => Carbon::parse($this->created_at)->format('d M Y'),
             'profile_image' => $this->getFirstMediaUrl('profile_images_collection'),
+            'roles' => $this->roles->pluck('title'),
             'is_verified' => $this->is_verified ? true : false,
             'is_followed' => $request->user() ? $request->user()->following->contains($this->id) : false,
         ];

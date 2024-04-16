@@ -12,7 +12,7 @@ class Post extends Model implements HasMedia
     use HasFactory, InteractsWithMedia;
 
 
-    protected $fillable = ['title', 'description', 'user_id'];
+    protected $fillable = ['description', 'user_id', 'total_likes'];
 
     public function user()
     {

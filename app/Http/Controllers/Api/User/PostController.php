@@ -7,7 +7,11 @@ use App\Models\Post;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use App\Http\Resources\User\PostResource;
+use App\Models\User;
+use App\Notifications\NewPostNotification;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Notification;
+
 
 // use GuzzleHttp\Psr7\Request;
 
@@ -18,6 +22,10 @@ class PostController extends Controller
     {
         $searchValue = $request->query('search');
         $posts = Post::with('user', 'tags')->where('description', 'like', '%' . $searchValue . '%')->orderBy('created_at', 'DESC')->paginate(5);
+
+        if ($posts->isEmpty()) {
+            return response()->json(['status' => 'error', 'message' => 'No posts found'], 404);
+        }
 
         $response = [
             'status' => 'ok',
@@ -85,10 +93,22 @@ class PostController extends Controller
     public function store(StorePostRequest $request)
     {
         $post = Post::create([
-            'title' => $request->title,
             'description' => $request->description,
             'user_id' => $request->user()->id,
         ]);
+
+        if (!$post) {
+            $response = [
+                'message' => 'can not create this post'
+            ];
+            return response()->json($response, 201);
+        }
+
+        $users = User::all();
+
+        Notification::send($users, new NewPostNotification($post));
+
+
 
         $post->addMediaFromRequest('post_image')->toMediaCollection('post_images_collection');
 

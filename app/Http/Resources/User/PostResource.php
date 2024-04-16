@@ -17,13 +17,13 @@ class PostResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'title' => $this->title,
             'body' => $this->description,
             'image' => $this->getFirstMediaUrl('post_images_collection'),
             'created_at' => Carbon::parse($this->created_at)->diffForHumans(),
             'author' => new UserPostResource($this->whenLoaded('user')),
             'tags' => TagResource::collection($this->whenLoaded('tags')),
             'comments_count' => $this->comments->count(),
+            'likes_count' => $this->total_likes,
             'comments' => CommentResource::collection($this->whenLoaded('comments')),
             'is_liked' => $request->user() ? $request->user()->likes->contains($this->id) : false,
             'is_saved' => $request->user() ? $request->user()->saves->contains($this->id) : false,

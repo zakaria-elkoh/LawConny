@@ -16,11 +16,12 @@ return new class extends Migration
             $table->string('name');
             $table->string('user_name')->unique();
             $table->string('password');
-            // $table->string('email')->unique();
-            // $table->string('phone')->unique();
-            // $table->text('description');
-            // $table->integer('total_followers');
-            // $table->boolean('is_verified');
+            $table->string('email')->unique();
+            $table->string('phone')->unique()->nullable();
+            $table->text('bio')->nullable();
+            $table->integer('total_followers')->default(0);
+            $table->integer('is_banned')->default(0);
+            $table->boolean('is_verified')->default(false);
             $table->timestamp('email_verified_at')->nullable();
             // $table->rememberToken();
             $table->timestamps();

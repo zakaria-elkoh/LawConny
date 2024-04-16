@@ -13,14 +13,12 @@ return new class extends Migration
     {
         Schema::create('posts', function (Blueprint $table) {
             $table->id();
-            $table->string('title');
             $table->text('description');
             // forien key
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            // $table->string('image')->nullable();
             // $table->string('status')->nullable();
-            // $table->integer('total_likes')->nullable();
+            $table->integer('total_likes')->default(0);
             $table->timestamps();
         });
     }
