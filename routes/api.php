@@ -40,6 +40,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // public routes
     Route::get('/users/all', [UserController::class, 'index']);
+    Route::get('/users/all/search', [UserController::class, 'search']);
     Route::get('/user', [UserController::class, 'getAuthUser']);
     Route::post('/profile/update/profile-image', [UserController::class, 'updateProfileImage']);
     Route::get('/profile/verify', [UserController::class, 'getVerificationRequestStatu']);

@@ -15,7 +15,7 @@ class LikeController extends Controller
     public function storeLike(Request $request, Post $post)
     {
 
-        $post->likes()->sync($request->user()->id);
+        $post->likes()->attach($request->user()->id);
 
         $post->update([
             'total_likes' => $post->total_likes + 1

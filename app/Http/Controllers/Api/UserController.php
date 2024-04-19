@@ -38,6 +38,34 @@ class UserController extends Controller
         return response()->json($response, 200);
     }
 
+    public function search(Request $request)
+    {
+
+        $searchValue = $request->query('search');
+        $usersType = $request->query('usersType');
+
+
+        $usres = [];
+
+        if ($usersType == 'all') {
+            $usres = User::with('user', 'tags')->where('description', 'like', '%' . $searchValue . '%')->orderBy('created_at', 'DESC')->paginate(5);
+        } elseif ($usersType == 'lawyer') {
+            // $followingUserIds = $authUser->following()->pluck('id');
+
+            $usres = User::with('user', 'tags')
+                ->where('user_name', 'like', '%' . $searchValue . '%')
+                ->where('user_name', 'like', '%' . $searchValue . '%')
+                ->orderBy('created_at', 'DESC')
+                ->paginate(10);
+        } else {
+            $usres = User::with('user', 'tags')->where('user_name', 'like', '%' . $searchValue . '%')->orderBy('created_at', 'DESC')->paginate(5);
+        }
+
+
+
+        return response()->json($searchValue . ' || ' . $userType, 200);
+    }
+
     public function updateProfileImage(Request $request)
     {
 

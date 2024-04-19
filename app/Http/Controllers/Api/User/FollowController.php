@@ -32,12 +32,11 @@ class FollowController extends Controller
     public function storeFollow(Request $request, User $user)
     {
 
-        // $follower = $request->user();
-        $request->user()->following()->sync($user->id);
+        $request->user()->following()->attach($user->id);
 
         // $user->notify(new FollowNotification($follower));
 
-        return response()->json($request->user() . ' lllsl ' . $user, 201);
+        return response()->json('Followed', 201);
     }
 
     public function removeFollow(Request $request, User $user)

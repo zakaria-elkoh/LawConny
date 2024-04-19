@@ -20,11 +20,23 @@ class PostController extends Controller
 
     public function search(Request $request)
     {
-        $searchValue = $request->query('search');
-        $posts = Post::with('user', 'tags')->where('description', 'like', '%' . $searchValue . '%')->orderBy('created_at', 'DESC')->paginate(5);
 
-        if ($posts->isEmpty()) {
-            return response()->json(['status' => 'error', 'message' => 'No posts found'], 404);
+        $authUser = $request->user();
+        $searchValue = $request->query('search');
+        $postsType = $request->query('postsType');
+
+        $posts = [];
+
+        if ($postsType == 'all') {
+            $posts = Post::with('user', 'tags')->where('description', 'like', '%' . $searchValue . '%')->orderBy('created_at', 'DESC')->paginate(5);
+        } elseif ($postsType == 'following') {
+            $followingUserIds = $authUser->following()->pluck('id');
+
+            $posts = Post::with('user', 'tags')
+                ->whereIn('user_id', $followingUserIds)
+                ->where('description', 'like', '%' . $searchValue . '%')
+                ->orderBy('created_at', 'DESC')
+                ->paginate(10);
         }
 
         $response = [
@@ -50,6 +62,7 @@ class PostController extends Controller
      */
     public function index()
     {
+
         $posts = Post::with('user', 'tags')->orderBy('created_at', 'DESC')->paginate(5);
 
         $response = [
@@ -106,9 +119,7 @@ class PostController extends Controller
 
         $users = User::all();
 
-        Notification::send($users, new NewPostNotification($post));
-
-
+        // Notification::send($users, new NewPostNotification($post));
 
         $post->addMediaFromRequest('post_image')->toMediaCollection('post_images_collection');
 
