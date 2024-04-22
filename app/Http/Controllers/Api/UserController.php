@@ -38,32 +38,50 @@ class UserController extends Controller
         return response()->json($response, 200);
     }
 
-    public function search(Request $request)
+    public function following(Request $request, User $user)
     {
 
-        $searchValue = $request->query('search');
-        $usersType = $request->query('usersType');
+        $following = $user->following()->get();
 
+        $response = [
+            'status' => 'ok',
+            'data' => UserResource::collection($following)
+        ];
+
+        return response()->json($response, 200);
+    }
+
+    public function search(Request $request)
+    {
+        $searchValue = $request->query('searchValue');
+        $usersType = $request->query('usersType');
 
         $usres = [];
 
         if ($usersType == 'all') {
-            $usres = User::with('user', 'tags')->where('description', 'like', '%' . $searchValue . '%')->orderBy('created_at', 'DESC')->paginate(5);
-        } elseif ($usersType == 'lawyer') {
-            // $followingUserIds = $authUser->following()->pluck('id');
-
-            $usres = User::with('user', 'tags')
-                ->where('user_name', 'like', '%' . $searchValue . '%')
-                ->where('user_name', 'like', '%' . $searchValue . '%')
+            $usres = User::where('name', 'like', '%' . $searchValue . '%')
                 ->orderBy('created_at', 'DESC')
-                ->paginate(10);
+                ->paginate();
+        } elseif ($usersType == 'lawyer') {
+            $usres = User::whereHas('roles', function ($query) {
+                $query->where('title', 'lawyer');
+            })->where('name', 'like', '%' . $searchValue . '%')
+                ->orderBy('created_at', 'DESC')
+                ->paginate();
         } else {
-            $usres = User::with('user', 'tags')->where('user_name', 'like', '%' . $searchValue . '%')->orderBy('created_at', 'DESC')->paginate(5);
+            $usres = User::whereHas('roles', function ($query) {
+                $query->where('title', 'user');
+            })->where('name', 'like', '%' . $searchValue . '%')
+                ->orderBy('created_at', 'DESC')
+                ->paginate();
         }
 
+        $response = [
+            'status' => 'ok',
+            'data' => UserResource::collection($usres)
+        ];
 
-
-        return response()->json($searchValue . ' || ' . $userType, 200);
+        return response()->json($response, 200);
     }
 
     public function updateProfileImage(Request $request)

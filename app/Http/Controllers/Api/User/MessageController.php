@@ -16,7 +16,7 @@ class MessageController extends Controller
     {
 
         // event(new SendMessage($request->message, $request->username));
-        Message::create([
+        $message = Message::create([
             'sender_id' => $request->user()->id,
             'receiver_id' => $request->receiver_id,
             'message' => $request->message
@@ -24,7 +24,8 @@ class MessageController extends Controller
 
         $response = [
             'status' => 'ok',
-            'message' => 'Message sent successfully.'
+            'message' => 'Message sent successfully.',
+            'data' => new MessageResource($message)
         ];
 
         return response()->json($response, 201);

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Comment;
 use App\Http\Requests\StoreCommentRequest;
 use App\Http\Requests\UpdateCommentRequest;
+use App\Http\Resources\User\CommentResource;
 use App\Models\Post;
 
 class CommentController extends Controller
@@ -24,7 +25,7 @@ class CommentController extends Controller
      */
     public function store(StoreCommentRequest $request)
     {
-        
+
         $comment = Comment::create([
             'body' => $request->comment,
             'post_id' => $request->post_id,
@@ -33,7 +34,7 @@ class CommentController extends Controller
 
         $response = [
             'message' => 'Comment added with success',
-            'data' => $comment,
+            'data' => new CommentResource($comment),
         ];
 
         return response()->json($response, 201);

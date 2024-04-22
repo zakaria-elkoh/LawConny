@@ -39,6 +39,9 @@ class VerificationRequestController extends Controller
     public function rejectRequest(Request $request)
     {
         $request = VerificationRequest::findOrFail($request->query('request_id'));
+        $user = User::findOrFail($request->user_id);
+        $user->is_verified = 0;
+        $user->save();
         $request->update([
             'status' => 'rejected'
         ]);

@@ -18,16 +18,9 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        // $users = User::where('id', '!=', $request->user()->id)->orderBy('id', 'desc')->paginate(5);
-
-        // if ($users->isEmpty()) {
-        //     return response()->json(['status' => 'error', 'message' => 'No users found'], 404);
-        // }
-
         $users = [];
 
         if ($request->user()->id) {
-            // $users = User::orderBy('id', 'desc')->paginate(9);
             $users = User::whereNotIn('id', auth()->user()->following()->pluck('id'))
                 ->orderBy('id', 'desc')
                 ->paginate(5);
@@ -71,6 +64,7 @@ class UserController extends Controller
      */
     public function getMyFollowers(Request $request)
     {
+
         $followers = $request->user()->followers()->with('followers')->get();
 
         if ($followers->isEmpty()) {

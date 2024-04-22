@@ -22,7 +22,7 @@ class LikeController extends Controller
         ]);
 
         return response()->json("liked" . $post, 201);
-    }
+    }   
 
     public function removeLike(Request $request, Post $post)
     {
