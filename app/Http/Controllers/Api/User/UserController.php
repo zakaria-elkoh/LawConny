@@ -22,6 +22,7 @@ class UserController extends Controller
 
         if ($request->user()->id) {
             $users = User::whereNotIn('id', auth()->user()->following()->pluck('id'))
+                ->where('id', '!=', $request->user()->id)
                 ->orderBy('id', 'desc')
                 ->paginate(5);
         } else {
@@ -42,10 +43,12 @@ class UserController extends Controller
         $user_id = $request->user()->id;
 
         $usersSentTo = Message::select('receiver_id as user_id')
-            ->where('sender_id', $user_id);
+            ->where('sender_id', $user_id)
+            ->distinct();
 
         $usersReceivedFrom = Message::select('sender_id as user_id')
-            ->where('receiver_id', $user_id);
+            ->where('receiver_id', $user_id)
+            ->distinct();
 
         $users = User::whereIn('id', $usersSentTo)
             ->orWhereIn('id', $usersReceivedFrom)
@@ -132,7 +135,7 @@ class UserController extends Controller
 
         $response = [
             'status' => 'ok',
-            'data' => $user
+            'data' => new UserProfileResource($user),
         ];
 
         return response()->json($response, 200);

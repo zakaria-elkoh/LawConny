@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\User\PostResource;
 use App\Http\Resources\User\UserPostResource;
 use App\Http\Resources\User\UserProfileResource;
 use App\Http\Resources\User\UserResource;
@@ -20,9 +21,12 @@ class UserController extends Controller
 
         $users = [];
 
+
         if ($request->user()->id) {
             // $users = User::orderBy('id', 'desc')->paginate(9);
             $users = User::whereNotIn('id', auth()->user()->following()->pluck('id'))
+                ->where('id', '!=', auth()->user()->id)
+                ->where('is_banned', 0)
                 ->orderBy('id', 'desc')
                 ->paginate(9);
         } else {
@@ -38,6 +42,74 @@ class UserController extends Controller
         return response()->json($response, 200);
     }
 
+    public function getFavePosts(Request $request)
+    {
+        $posts = $request->user()->favePosts()->with('user')->paginate(9);
+
+        $response = [
+            'status' => 'ok',
+            'faves' => 'favorite posts',
+            'data' => PostResource::collection($posts)
+        ];
+
+        return response()->json($response, 200);
+    }
+
+    public function getSavedPosts(Request $request)
+    {
+        $posts = $request->user()->savedPosts()->with('user')->paginate(9);
+
+        $response = [
+            'status' => 'ok',
+            'saves' => 'saved posts',
+            'data' => PostResource::collection($posts)
+        ];
+
+        return response()->json($response, 200);
+    }
+
+    public function getUserById(Request $request, User $user)
+    {
+        $response = [
+            'status' => 'ok',
+            'data' => new UserResource($user)
+        ];
+
+        return response()->json($response, 200);
+    }
+
+    public function updateProfile(Request $request, User $user)
+    {
+        $newUser = $user->update([
+            'user_name' => $request->user_name,
+            'name' => $request->name,
+            'email' => $request->email,
+            // 'phone' => $request->phone,
+            'bio' => $request->bio,
+        ]);
+
+        // $response = [
+        //     'status' => 'ok',
+        //     'message' => 'profile updated successfully',
+        //     'data' => new UserResource($newUser)
+        // ];
+
+        return response()->json($newUser, 200);
+    }
+
+    public function getPostsByUser(Request $request, User $user)
+    {
+
+        $posts = $user->posts()->with('user')->paginate(9);
+
+        $response = [
+            'status' => 'ok',
+            'data' => PostResource::collection($posts)
+        ];
+
+        return response()->json($response, 200);
+    }
+
     public function following(Request $request, User $user)
     {
 
@@ -46,6 +118,19 @@ class UserController extends Controller
         $response = [
             'status' => 'ok',
             'data' => UserResource::collection($following)
+        ];
+
+        return response()->json($response, 200);
+    }
+
+    public function followers(Request $request, User $user)
+    {
+
+        $followers = $user->followers()->get();
+
+        $response = [
+            'status' => 'ok',
+            'data' => UserResource::collection($followers)
         ];
 
         return response()->json($response, 200);
@@ -118,6 +203,7 @@ class UserController extends Controller
     {
         $response = [
             'status' => 'ok',
+            'auth' => 'auth user',
             'data' => new UserProfileResource($request->user())
         ];
 

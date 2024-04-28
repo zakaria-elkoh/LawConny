@@ -60,17 +60,17 @@ class PostController extends Controller
      * @OA\Response(response="404", description="No student found"),
      * )
      */
-    public function index()
+    public function index(Request $request)
     {
 
-        $posts = Post::with('user', 'tags')->orderBy('created_at', 'DESC')->paginate(5);
+        $pageNumber = $request->query('page', 1);
+        $posts = Post::with('user', 'tags')
+            ->orderBy('created_at', 'DESC')
+            ->paginate(5, ['*'], 'page', $pageNumber);
 
         $response = [
             'status' => 'ok',
-            'data' => PostResource::collection($posts),
-            'links' => [
-                'next_page_url' => $posts->nextPageUrl()
-            ]
+            'data' => PostResource::collection($posts)
         ];
 
         return response()->json($response, 200);
@@ -121,7 +121,10 @@ class PostController extends Controller
 
         // Notification::send($users, new NewPostNotification($post));
 
-        $post->addMediaFromRequest('post_image')->toMediaCollection('post_images_collection');
+        if ($request->hasFile('post_image')) {
+            $post->addMediaFromRequest('post_image')->toMediaCollection('post_images_collection');
+        }
+
 
         $response = [
             'message' => 'Post created with success',
@@ -216,6 +219,14 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        return "you wanna delete a post";
+
+        $post->delete();
+
+        $response = [
+            'status' => 'ok',
+            'message' => 'Post has been deleted'
+        ];
+
+        return response()->json($response, 200);
     }
 }

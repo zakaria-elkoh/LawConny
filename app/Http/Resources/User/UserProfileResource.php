@@ -26,6 +26,8 @@ class UserProfileResource extends JsonResource
             'location' => $this->location,
             'is_verified' => $this->is_verified === 2 ? 'pending' : ($this->is_verified ? true : false),
             // 'website' => $this->website,
+            'roles' => $this->roles->pluck('title'),
+            'email' => $this->email,
             'followers_count' => $this->followers->count(),
             'following_count' => $this->following->count(),
             'posts_count' => $this->posts->count(),

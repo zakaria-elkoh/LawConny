@@ -25,7 +25,8 @@ class User extends Authenticatable implements HasMedia
         'user_name',
         'email',
         'password',
-        'profile_image'
+        'profile_image',
+        'bio'
     ];
 
     /**
@@ -98,8 +99,19 @@ class User extends Authenticatable implements HasMedia
         return $this->hasMany(Comment::class, 'comments');
     }
 
-    public function notifications()
+    public function favePosts()
     {
-        // return $this->hasMany(Notification::class);
+        return $this->belongsToMany(Post::class, 'likes', 'user_id', 'post_id');
     }
+
+    public function savedPosts()
+    {
+        return $this->belongsToMany(Post::class, 'saves', 'user_id', 'post_id');
+    }
+
+
+    // public function notifications()
+    // {
+    //     // return $this->hasMany(Notification::class);
+    // }
 }

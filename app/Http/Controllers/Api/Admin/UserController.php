@@ -9,6 +9,7 @@ use App\Http\Resources\User\UserPostResource;
 use App\Http\Resources\User\UserProfileResource;
 use App\Http\Resources\User\UserResource;
 use App\Models\Message;
+use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
 
@@ -24,6 +25,34 @@ class UserController extends Controller
         $response = [
             'status' => 'ok',
             'data' => UserResource::collection($users)
+        ];
+
+        return response()->json($response, 200);
+    }
+
+    public function deletePost(Post $post) {
+        $post->delete();
+
+        $response = [
+            'status' => 'ok',
+            'message' => 'Post has been deleted'
+        ];
+
+        return response()->json($response, 200);
+    }
+
+    public function getPosts()
+    {
+        $posts = Post::with('user', 'tags')->paginate(5);
+
+        $response = [
+            'status' => 'ok',
+            'data' => PostResource::collection($posts),
+            'pagination' => [
+                'current_page' => $posts->currentPage(),
+                'per_page' => $posts->perPage(),
+                'total_pages' => ceil($posts->total() / $posts->perPage()),
+            ]
         ];
 
         return response()->json($response, 200);
