@@ -95,7 +95,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/posts', UserPostController::class)->except(['show']);
 });
 
-// Route::get('/posts', [UserPostController::class, 'index']);
 Route::get('/posts/{post}', [UserPostController::class, 'show']);
 
 
