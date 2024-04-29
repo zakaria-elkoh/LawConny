@@ -80,19 +80,19 @@ class UserController extends Controller
 
     public function updateProfile(Request $request, User $user)
     {
+        if ($request->name !== $user->name) {
+            $user->update([
+                'is_verified' => 0
+            ]);
+        }
+
         $newUser = $user->update([
-            'user_name' => $request->user_name,
+            // 'user_name' => $request->user_name,
             'name' => $request->name,
             'email' => $request->email,
-            // 'phone' => $request->phone,
             'bio' => $request->bio,
         ]);
 
-        // $response = [
-        //     'status' => 'ok',
-        //     'message' => 'profile updated successfully',
-        //     'data' => new UserResource($newUser)
-        // ];
 
         return response()->json($newUser, 200);
     }
