@@ -182,13 +182,7 @@ class UserController extends Controller
         if ($request->hasFile('profile_image')) {
             $user->addMediaFromRequest('profile_image')->toMediaCollection('profile_images_collection');
         }
-
-        // Upload the new profile image to the media library
-        // $profileImage = $request->file('profile_image');
-        // if ($profileImage) {
-        //     $user->addMedia($profileImage)->toMediaCollection('profile_image');
-        // }
-
+        
         $response = [
             'status' => 'ok',
         ];
