@@ -13,13 +13,6 @@ use Illuminate\Http\Request;
 class FollowController extends Controller
 {
 
-    // public function getFollowing(Request $request)
-    // {
-
-    //     $followings = $request->user()->following()->paginate(5);
-
-    //     return response()->json($followings, 200);
-    // }
 
     public function storeFollow(Request $request, User $user)
     {
