@@ -87,7 +87,6 @@ class UserController extends Controller
         }
 
         $newUser = $user->update([
-            // 'user_name' => $request->user_name,
             'name' => $request->name,
             'email' => $request->email,
             'bio' => $request->bio,
