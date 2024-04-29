@@ -142,11 +142,6 @@ class UserController extends Controller
 
 
 
-
-
-    // ==================================================================================
-
-
     public function getChattingPartners(Request $request)
     {
 
