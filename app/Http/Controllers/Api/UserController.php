@@ -22,7 +22,6 @@ class UserController extends Controller
 
 
         if ($request->user()->id) {
-            // $users = User::orderBy('id', 'desc')->paginate(9);
             $users = User::whereNotIn('id', auth()->user()->following()->pluck('id'))
                 ->where('id', '!=', auth()->user()->id)
                 ->where('is_banned', 0)
