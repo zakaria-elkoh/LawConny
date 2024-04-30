@@ -30,7 +30,8 @@ class UserController extends Controller
         return response()->json($response, 200);
     }
 
-    public function deletePost(Post $post) {
+    public function deletePost(Post $post)
+    {
         $post->delete();
 
         $response = [
@@ -63,7 +64,7 @@ class UserController extends Controller
 
         $lawyers = User::whereHas('roles', function ($query) {
             $query->where('title', 'lawyer');
-        })->with('roles')->paginate(5);
+        })->with('roles')->orderBy('id', 'desc')->paginate(5);
 
         $response = [
             'status' => 'ok',
@@ -102,7 +103,7 @@ class UserController extends Controller
 
         $users = User::whereHas('roles', function ($query) {
             $query->where('title', '!=', 'lawyer');
-        })->with('roles')->get();
+        })->with('roles')->orderBy('id', 'desc')->get();
 
         $response = [
             'status' => 'ok',

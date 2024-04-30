@@ -32,7 +32,7 @@ Route::get('/admin/test', function () {
 
 
 
-Route::middleware('auth:sanctum')->group(function () {
+Route::middleware(['auth:sanctum', 'isBanned'])->group(function () {
     // admin routes
     Route::middleware('isAdmin')->group(function () {
         Route::apiResource('/admin/statistic', AdminStatisticController::class);
